@@ -1,7 +1,9 @@
 FROM php:8.1.1-fpm
-ENV GIT_EMAIL=${USER_EMAIL} \
-    GIT_NAME=${USER_NAME}
-
+ARG USER_EMAIL
+ARG USER_NAME
+ENV GIT_EMAIL=$USER_EMAIL \
+    GIT_NAME=$USER_NAME
+RUN echo $GIT_EMAIL
 RUN apt update \
     && apt install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip \
     && docker-php-ext-install intl opcache pdo pdo_mysql \
