@@ -30,7 +30,7 @@ This repository provides a Docker configuration for a development environment fo
 
 `` docker-compose exec php /bin/bash ``
 
-`` symfony new . ``
+`` symfony new . --no-git``
 
 6. Access the Symfony application in your web browser at `http://localhost:8000`
 
