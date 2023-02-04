@@ -25,7 +25,11 @@ services:
   php:
     container_name: php
     build:
-      context: ./php
+      context: .
+      dockerfile: ./php/Dockerfile
+      args:
+        USER_EMAIL: ${USER_EMAIL}
+        USER_NAME: ${USER_NAME}
     ports:
       - '9000:9000'
     volumes:
