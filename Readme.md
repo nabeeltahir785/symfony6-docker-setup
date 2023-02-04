@@ -28,7 +28,9 @@ This repository provides a Docker configuration for a development environment fo
 
 5. Install the dependencies for the Symfony application:
 
-`` docker-compose exec app composer install ``
+`` docker-compose exec php /bin/bash ``
+
+`` symfony new . ``
 
 6. Access the Symfony application in your web browser at `http://localhost:8000`
 
