@@ -1,5 +1,5 @@
 # ============================================================================
-# GitHub Actions CI — Symfony 6.4/7.0 + FrankenPHP
+# GitHub Actions CI — Symfony 7.0 + FrankenPHP
 # Triggered on: push to main, pull requests
 # ============================================================================
 
@@ -71,7 +71,9 @@ jobs:
 
       - name: PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
-        continue-on-error: true
+
+      - name: Security audit
+        run: composer audit --no-interaction
 
   # --------------------------------------------------------------------------
   # Job 2: Test Suite (full Docker stack)
@@ -144,7 +146,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@localhost:5432/${{ env.POSTGRES_DB }}?serverVersion=16&charset=utf8
           REDIS_URL: redis://localhost:6379
-          MESSENGER_TRANSPORT_DSN: redis://localhost:6379/messages
+          MESSENGER_TRANSPORT_DSN: in-memory://
           MAILER_DSN: null://null
         run: |
           php -d pcov.enabled=1 bin/phpunit \
@@ -173,6 +175,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

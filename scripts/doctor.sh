@@ -72,7 +72,7 @@ if [ -f bin/console ]; then
         echo -e "${WARN} (bin/console exists but failed to get version)"
     fi
 else
-    echo -e "${WARN} (no Symfony app yet — run: make scaffold)"
+    echo -e "${WARN} (no Symfony app detected — run: make up)"
 fi
 
 # --------------------------------------------------------------------------

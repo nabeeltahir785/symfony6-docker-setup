@@ -9,3 +9,8 @@ framework:
                 adapter: cache.app
             doctrine.system_cache_pool:
                 adapter: cache.system
+
+when@test:
+    framework:
+        cache:
+            app: cache.adapter.array

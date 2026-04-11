@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ============================================================================
-# Symfony 6.4/7.0 — Production-Ready Multi-Stage Dockerfile
+# Symfony 7.0 — Production-Ready Multi-Stage Dockerfile
 # Server: FrankenPHP (Caddy embedded) | PHP 8.3 | Debian Bookworm
 # Stages: base → dev | test | prod_builder → prod
 # ============================================================================
@@ -33,7 +33,6 @@ RUN <<-EOF
 		git
 	install-php-extensions \
 		@composer \
-		amqp \
 		apcu \
 		intl \
 		opcache \
@@ -160,7 +159,7 @@ FROM frankenphp_prod_builder AS frankenphp_prod
 # hadolint ignore=DL3008
 RUN <<-EOF
 	apt-get purge -y --auto-remove git
-	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.composer/cache
 	# Remove setuid/setgid bits for security hardening
 	find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
@@ -168,5 +167,4 @@ EOF
 # Drop to non-root
 USER www-data
 
-HEALTHCHECK --start-period=60s CMD php -r 'exit(false === @file_get_contents("http://localhost:2019/metrics", context: stream_context_create(["http" => ["timeout" => 5]])) ? 1 : 0);'
 CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]

@@ -54,7 +54,7 @@ fi
 # --------------------------------------------------------------------------
 # Wait for Redis
 # --------------------------------------------------------------------------
-if [ "${WAIT_FOR_DB:-false}" = "true" ] && [ -n "${REDIS_URL:-}" ]; then
+if [ "${WAIT_FOR_REDIS:-false}" = "true" ] && [ -n "${REDIS_URL:-}" ]; then
     echo "⏳ Waiting for Redis..."
     counter=0
     until php -r "
@@ -80,7 +80,7 @@ if [ -f bin/console ] && [ -d vendor ]; then
     mkdir -p var/cache var/log
     if [ "$APP_ENV" != 'prod' ]; then
         setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var 2>/dev/null || \
-            chmod -R 777 var 2>/dev/null || true
+            chown -R www-data:www-data var 2>/dev/null || true
     fi
 
     # Auto-create database (dev/test only)
@@ -93,6 +93,10 @@ if [ -f bin/console ] && [ -d vendor ]; then
     if [ "${RUN_MIGRATIONS:-false}" = "true" ] && [ "${WORKER_CONTAINER:-false}" != "true" ]; then
         echo "🔄 Running database migrations..."
         php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration 2>/dev/null || true
+
+        # Create Messenger transport tables (for Doctrine-based failed transport)
+        echo "📨 Setting up Messenger transports..."
+        php bin/console messenger:setup-transports --no-interaction 2>/dev/null || true
     fi
 
     # Warm up cache

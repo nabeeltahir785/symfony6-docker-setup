@@ -164,7 +164,7 @@ test-coverage: ## 📊 Run tests with HTML coverage report
 # ============================================================================
 #  TOOLS
 # ============================================================================
-.PHONY: shell logs composer console cache-clear worker-logs redis-cli doctor
+.PHONY: shell logs composer console cache-clear worker-logs redis-cli doctor messenger-failed messenger-retry messenger-stop security-audit
 
 shell: ## 🐚 Open bash in the app container
 	$(PHP_EXEC) bash
@@ -190,6 +190,18 @@ redis-cli: ## 🔴 Open Redis CLI
 doctor: ## 🩺 Verify all services are healthy
 	@chmod +x scripts/doctor.sh
 	$(PHP_EXEC) bash scripts/doctor.sh
+
+messenger-failed: ## 📋 List failed messages
+	$(CONSOLE) messenger:failed:show
+
+messenger-retry: ## 🔄 Retry all failed messages
+	$(CONSOLE) messenger:failed:retry --force
+
+messenger-stop: ## ⏹  Signal workers to stop gracefully after current message
+	$(CONSOLE) messenger:stop-workers
+
+security-audit: ## 🔒 Check dependencies for known security vulnerabilities
+	$(COMPOSER) audit --no-interaction
 
 # ============================================================================
 #  GENERATORS (Symfony Maker shortcuts)

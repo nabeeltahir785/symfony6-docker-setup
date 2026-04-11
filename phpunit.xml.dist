@@ -24,6 +24,10 @@
         </testsuite>
     </testsuites>
 
+    <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+    </extensions>
+
     <source>
         <include>
             <directory suffix=".php">src</directory>

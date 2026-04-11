@@ -4,6 +4,10 @@ framework:
     csrf_protection: true
     handle_all_throwables: true
 
+    # Trusted proxies for load balancers / CDNs (set TRUSTED_PROXIES env var in production)
+    trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port']
+
     session:
         handler_id: '%env(REDIS_URL)%'
         cookie_secure: auto

@@ -16,5 +16,11 @@ framework:
                 dsn: 'doctrine://default?queue_name=failed'
 
         routing:
-            # Route your messages to the async transport:
-            # 'App\Message\YourMessage': async
+            'App\Message\ExampleNotification': async
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'in-memory://'
+                failed: 'in-memory://'

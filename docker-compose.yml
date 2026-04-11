@@ -1,5 +1,5 @@
 # ============================================================================
-# Symfony 6.4/7.0 — Docker Compose Orchestration
+# Symfony 7.0 — Docker Compose Orchestration
 # Services: FrankenPHP (Caddy), PostgreSQL 16, Redis 7, Messenger Worker, Mailpit
 # ============================================================================
 
@@ -15,24 +15,19 @@ services:
       target: frankenphp_dev
     restart: unless-stopped
     environment:
-      APP_ENV: ${APP_ENV:-dev}
-      APP_SECRET: ${APP_SECRET:-!ChangeThisAppSecret!}
-      APP_DEBUG: ${APP_DEBUG:-1}
-      SERVER_NAME: ${SERVER_NAME:-localhost}
+      # Compose-constructed DSNs (these use Docker service hostnames)
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
       REDIS_URL: redis://redis:6379
       MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
       MAILER_DSN: smtp://mailpit:1025
+      # Entrypoint control flags
       WAIT_FOR_DB: "true"
+      WAIT_FOR_REDIS: "true"
       RUN_MIGRATIONS: "true"
-      XDEBUG_MODE: ${XDEBUG_MODE:-off}
-      # FrankenPHP worker config
-      FRANKENPHP_WORKER_CONFIG: ${FRANKENPHP_WORKER_CONFIG:-watch}
     volumes:
       - ./:/app
       - caddy_data:/data
       - caddy_config:/config
-      - app_var:/app/var
     ports:
       - "${HTTP_PORT:-80}:80"
       - "${HTTPS_PORT:-443}:443"
@@ -55,25 +50,23 @@ services:
       dockerfile: Dockerfile
       target: frankenphp_dev
     restart: unless-stopped
+    stop_grace_period: 30s
     environment:
-      APP_ENV: ${APP_ENV:-dev}
-      APP_SECRET: ${APP_SECRET:-!ChangeThisAppSecret!}
+      # Compose-constructed DSNs (same as app — Docker service hostnames)
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
       REDIS_URL: redis://redis:6379
       MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
       MAILER_DSN: smtp://mailpit:1025
+      # Entrypoint control flags
       WAIT_FOR_DB: "true"
+      WAIT_FOR_REDIS: "true"
       WORKER_CONTAINER: "true"
-      # Skip auto-install — the app container handles it via shared bind mount
       SKIP_AUTO_INSTALL: "true"
     # Override CMD to run the Messenger consumer instead of the web server
     command: ["php", "bin/console", "messenger:consume", "async", "--time-limit=3600", "--memory-limit=256M", "-vv"]
     volumes:
       - ./:/app
-      - app_var:/app/var
     depends_on:
-      app:
-        condition: service_healthy
       database:
         condition: service_healthy
       redis:
@@ -110,7 +103,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--requirepass", "${REDIS_PASSWORD:-}"]
     volumes:
       - redis_data:/data
     ports:
@@ -153,8 +146,6 @@ volumes:
   caddy_data:
     driver: local
   caddy_config:
-    driver: local
-  app_var:
     driver: local
   mailpit_data:
     driver: local

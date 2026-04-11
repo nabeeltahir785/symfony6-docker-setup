@@ -53,3 +53,10 @@ when@prod:
                 channels: [deprecation]
                 path: "php://stderr"
                 formatter: monolog.formatter.json
+            # Messenger worker logs — visible outside fingers_crossed buffer
+            messenger:
+                type: stream
+                path: "php://stderr"
+                level: info
+                channels: [messenger]
+                formatter: monolog.formatter.json

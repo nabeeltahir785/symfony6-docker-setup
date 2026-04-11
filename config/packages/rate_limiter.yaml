@@ -1,0 +1,21 @@
+# config/packages/rate_limiter.yaml
+# Baseline rate limiting — customize per your application needs.
+# Requires symfony/rate-limiter (included via framework-bundle).
+#
+# Apply to controllers with #[IsGranted] or inject RateLimiterFactory.
+# See: https://symfony.com/doc/current/rate_limiter.html
+framework:
+    rate_limiter:
+        # Global API throttle: 100 requests per 60 seconds per IP
+        anonymous_api:
+            policy: sliding_window
+            limit: 100
+            interval: '60 seconds'
+            lock_factory: lock.default.factory
+
+        # Login throttle: 5 attempts per minute per IP
+        login:
+            policy: fixed_window
+            limit: 5
+            interval: '1 minute'
+            lock_factory: lock.default.factory
