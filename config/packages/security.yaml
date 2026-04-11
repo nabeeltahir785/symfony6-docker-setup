@@ -1,0 +1,30 @@
+# config/packages/security.yaml
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers:
+        # Default: in-memory provider (no User entity needed)
+        # Run "make make-user" to generate a User entity and switch to Doctrine provider
+        users_in_memory:
+            memory: null
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            # provider: app_user_provider
+
+    access_control: []
+
+# After running "make make-user", update this file:
+#    providers:
+#        app_user_provider:
+#            entity:
+#                class: App\Entity\User
+#                property: email
+#    firewalls:
+#        main:
+#            provider: app_user_provider

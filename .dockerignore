@@ -1,0 +1,46 @@
+# ============================================================================
+# Docker Build Context Exclusions
+# Reduce build context size and prevent secrets from leaking into images
+# ============================================================================
+
+# Version Control
+.git
+.gitignore
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Docker meta (prevent recursive builds)
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# CI/CD
+.github/
+
+# Documentation
+*.md
+LICENSE
+docs/
+
+# Local overrides (never bake secrets into images)
+.env.local
+.env.*.local
+
+# Test artifacts & coverage reports
+var/coverage/
+var/cache/
+var/log/
+
+# Vendor (installed at runtime in dev, baked in prod via COPY)
+# Do NOT exclude vendor/ — it's needed for prod/test stages
+
+# Node (if using Webpack Encore)
+node_modules/
+
+# Scripts (only needed for dev bind-mount)
+scripts/

@@ -1,0 +1,4 @@
+# config/packages/debug.yaml
+when@dev:
+    debug:
+        dump_destination: "tcp://%env(default::VAR_DUMPER_SERVER)%"

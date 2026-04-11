@@ -1,2 +1,42 @@
-.idea
-.env
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment (local overrides only — .env is committed)
+.env.local
+.env.*.local
+!.env.test
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build artifacts
+/var/
+/public/bundles/
+/public/build/
+
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache/
+
+# PHP-CS-Fixer
+.php-cs-fixer.cache
+
+# Docker volumes
+postgres_data/
+
+# Coverage
+coverage/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Legacy (old setup — safe to delete)
+/postgres/
+
+# Composer lock is committed for reproducible installs
+# Do NOT add composer.lock to gitignore
